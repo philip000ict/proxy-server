@@ -1,0 +1,25 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "Accesses the apps via browser")
+
+System_Boundary(c1, "test.com system") {
+    Container(httpsProxy, "HTTPS Reverse Proxy", "NGINX/Traefik", "Handles TLS, forwards HTTP to internal proxy")
+    Container(internalProxy, "Internal HTTP Reverse Proxy", "NGINX", "Routes requests by path to Docker containers")
+    
+    Container(app1, "App 1", "nginx container", "Serves static or dynamic content at /app1/")
+    Container(app2, "App 2", "nginx container", "Serves static or dynamic content at /app2/")
+    Container(app3, "App 3", "nginx container", "...")
+    Container(app9, "App 9", "nginx container", "... up to /app9/")
+}
+
+Rel(user, httpsProxy, "Browses to https://test.com/appX/")
+Rel(httpsProxy, internalProxy, "Proxies HTTP to", "http://internal-proxy:8000")
+Rel(internalProxy, app1, "Routes /app1/ to")
+Rel(internalProxy, app2, "Routes /app2/ to")
+Rel(internalProxy, app3, "Routes /app3/ to")
+Rel(internalProxy, app9, "Routes /app9/ to")
+
+@enduml

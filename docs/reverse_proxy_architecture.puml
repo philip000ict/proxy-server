@@ -1,0 +1,44 @@
+
+@startuml
+skinparam linetype ortho
+skinparam node {
+  BackgroundColor<<proxy>> LightBlue
+  BackgroundColor<<app>> LightGreen
+  BackgroundColor<<ssl>> LightYellow
+}
+
+actor User
+
+node "External HTTPS Reverse Proxy\n(unchanged, TLS termination)" <<ssl>> {
+    node "NGINX/Traefik\nhttps://test.com" <<ssl>> {
+        User --> "HTTPS: test.com/appX/"
+        "HTTPS: test.com/appX/" --> "Internal Proxy Router:8000"
+    }
+}
+
+node "Internal Reverse Proxy (NGINX)\nPort 8000\nDocker container" <<proxy>> {
+    node "Path Routing Rules" {
+        /app1/ --> app1
+        /app2/ --> app2
+        /app3/ --> app3
+        /app4/ --> app4
+        /app5/ --> app5
+        /app6/ --> app6
+        /app7/ --> app7
+        /app8/ --> app8
+        /app9/ --> app9
+    }
+}
+
+node "Docker Network: test-app-bridge" {
+    node app1 <<app>>
+    node app2 <<app>>
+    node app3 <<app>>
+    node app4 <<app>>
+    node app5 <<app>>
+    node app6 <<app>>
+    node app7 <<app>>
+    node app8 <<app>>
+    node app9 <<app>>
+}
+@enduml
